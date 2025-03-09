@@ -1,1 +1,454 @@
-Hello world
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Chapter Challenge</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5/dist/darkly/bootstrap.min.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #121212;
+    }
+    body.upside-down {
+      transform: rotate(180deg);
+    transform-origin: center center;
+    }
+    #wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    h1 {
+      position: relative;
+      font-size: 3em;
+    }
+    h2 {
+      font-size: 1.6em;
+      margin-bottom: 1em;
+    }
+    #question-container {
+      max-width: 600px;
+      width: 100%;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+    #question-container img {
+      margin: 10px;
+    }
+    textarea {
+      resize: vertical;
+    }
+    #error-message, #timer-error {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    #click-count {
+      margin-top: 10px;
+      padding: 10px;
+      background: rgba(0, 0, 255, 0.1);
+    }
+  </style>
+  <script>
+    let currentQuestion = 0;
+    const questions = [
+      {
+        prompt: "Q1: Fix the following function to correctly add two numbers.",
+        img: "https://media.tenor.com/iUN5mhMnNWcAAAAm/its-very-simple-eric-cartman.webp",
+        stub: "function add(a, b) {\n  return a - b;\n}",
+        test: (code) => {
+          try {
+            eval(code);
+            return add(2, 3) === 5;
+          } catch (e) {
+            return false;
+          }
+        }
+      },
+      {
+        prompt: "Q2: Write a function that returns a unique array (no duplicates).",
+        img: "https://media.tenor.com/-LHzJmfwj2kAAAAM/spongebob-too-easy.gif",
+        stub: "function uniqueArray(arr) {\n  // Your code here\n}",
+        test: (code) => {
+          try {
+            eval(code);
+            return uniqueArray([1, 2, 2, 3, 4, 4, 5]).toString() === "1,2,3,4,5";
+          } catch (e) {
+            return false;
+          }
+        }
+      },
+      {
+        prompt: "Q3: Write a function that reverses a string.",
+        img: "https://media.tenor.com/WFP7PPKsid4AAAAm/it%27s-easy-elfo.webp",
+        stub: "function reverseString(str) {\n  // Your code here\n}",
+        setup: function() {
+            // Flip the page.
+            document.body.classList.add('upside-down');
+
+            // Render like a standard code question.
+            const container = document.getElementById("question-container");
+            container.innerHTML = `
+            <img src="${this.img}"/>
+            <h2 id="question-text">${this.prompt}</h2>
+            <textarea id="code-editor" rows="6" cols="50" class="form-control mb-3"></textarea>
+            <div>
+                <button id="submit-btn" onclick="checkAnswer()" class="btn btn-primary me-2">Submit</button>
+                <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
+            </div>
+            <div id="error-message"></div>
+            `;
+            document.getElementById("code-editor").value = this.stub;
+        },
+        test: function(code) {
+            try {
+            eval(code);
+            return reverseString("hello") === "olleh";
+            } catch (e) {
+            return false;
+            }
+        }
+    },
+      {
+        prompt: "Q4: Click the button 1000 times to proceed.",
+        stub: "",
+        setup: () => {
+          document.getElementById("question-container").innerHTML = `
+            <img src="https://media.tenor.com/xDA1W3aGj_AAAAAM/apartemen-apartemen7.gif"/>
+            <h2 id="question-text">Q4: Click the button 1,000 times to proceed.</h2>
+            <button id="click-me" class="btn btn-primary">Click Me</button>
+            <p id="click-count">Clicks: 0</p>
+            <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
+          `;
+          let count = 0;
+          document.getElementById("click-me").addEventListener("click", function() {
+            count++;
+            document.getElementById("click-count").innerText = "Clicks: " + count;
+            if (count >= 1000) nextQuestion();
+          });
+        }
+      },
+      {
+        prompt: "Q5: Find and click the hidden button to proceed.",
+        stub: "",
+        setup: () => {
+          document.getElementById("question-container").innerHTML = `
+          <img src="https://media.tenor.com/nDEsMw2HzFwAAAAM/huh-what.gif"/>   
+          <h2 id="question-text">Q5: Find and click the hidden button to proceed.</h2>
+            <button id="hidden-btn" style="display: none;" class="btn btn-primary">Hidden Button</button>
+            <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
+          `;
+          document.getElementById("hidden-btn").addEventListener("click", nextQuestion);
+        }
+      },
+      {
+        prompt: "Q6: Click the moving target button to proceed.",
+        stub: "",
+        setup: () => {
+          document.getElementById("question-container").innerHTML = `
+            <img src="https://media.tenor.com/ZKlYeAOpLacAAAAM/tweety-chase.gif" />
+            <h2 id="question-text">Q6: Click the moving target button to proceed.</h2>
+            <button id="moving-btn" class="btn btn-primary" style="position: absolute;">Catch me</button>
+            <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
+          `;
+          const container = document.getElementById("question-container");
+          const btn = document.getElementById("moving-btn");
+          function moveButton() {
+            const containerWidth = container.clientWidth - btn.offsetWidth;
+            const containerHeight = container.clientHeight - btn.offsetHeight;
+            btn.style.left = Math.random() * containerWidth + "px";
+            btn.style.top = Math.random() * containerHeight + "px";
+          }
+          moveButton();
+          btn.addEventListener("mouseover", moveButton);
+          btn.addEventListener("click", nextQuestion);
+        }
+      },
+      {
+        prompt: "Q7: Enter the secret key sequence to proceed.",
+        stub: "",
+        setup: () => {
+          document.getElementById("question-container").innerHTML = `
+            <img src="https://media.tenor.com/W-42HlChzwAAAAAM/rainn-wilson.gif"/>
+            <h2 id="question-text">Q7: Enter the secret key sequence to proceed.</h2>
+            <p>Enter the sequence using your keyboard.</p>
+            <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
+          `;
+          const secret = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+          let index = 0;
+          function keyHandler(e) {
+            if (e.key === secret[index]) {
+              index++;
+              if (index === secret.length) {
+                document.removeEventListener("keydown", keyHandler);
+                nextQuestion();
+              }
+            } else {
+              index = 0;
+            }
+          }
+          document.addEventListener("keydown", keyHandler);
+        }
+      },
+      {
+        prompt: "Q8: Click the button when the timer shows 0 seconds to proceed.",
+        stub: "",
+        setup: () => {
+          const container = document.getElementById("question-container");
+          container.innerHTML = `
+            <img src="https://media.tenor.com/L_tp5zwpnOoAAAAM/i-dont-know-should-i-wait-barton.gif" />
+            <h2 id="question-text">Q8: Click the button when the timer shows 0 seconds to proceed.</h2>
+            <p id="timer">Timer: 30</p>
+            <button id="timer-btn" class="btn btn-primary" disabled>Click me</button>
+            <div id="timer-error"></div>
+            <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
+          `;
+          const timerEl = document.getElementById("timer");
+          const timerBtn = document.getElementById("timer-btn");
+          const errorEl = document.getElementById("timer-error");
+          errorEl.style.color = "red";
+          let timeLeft = 60;
+          function startCountdown() {
+            timerBtn.disabled = true;
+            errorEl.innerText = "";
+            timeLeft = 60;
+            timerEl.innerText = "Timer: " + timeLeft;
+            const countdown = setInterval(() => {
+              timeLeft--;
+              timerEl.innerText = "Timer: " + timeLeft;
+              if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerEl.innerText = "Timer: 0 - Click now!";
+                timerBtn.disabled = false;
+                setTimeout(() => {
+                  if (!timerBtn.disabled) {
+                    errorEl.innerText = "Too late! Try again.";
+                    timerBtn.disabled = true;
+                    startCountdown();
+                  }
+                }, 1000);
+              }
+            }, 1000);
+          }
+          timerBtn.addEventListener("click", () => {
+            if (!timerBtn.disabled) {
+              timerBtn.disabled = true;
+              nextQuestion();
+            }
+          });
+          startCountdown();
+        }
+      },
+      
+      {
+        prompt: `Q9: Return the string "hello world"`,
+        stub: `function weirdKeyboard() {
+            return...
+        `,
+        test: function(code) {
+            try {
+            eval(code);
+            return weirdKeyboard() === "hello world";
+            } catch (e) {
+            return false;
+            }
+        },
+        setup: function() {
+            // Standard code question layout
+            const container = document.getElementById("question-container");
+            container.innerHTML = `
+            <img src="https://media.tenor.com/ew0xK1Wkx-cAAAAM/shokka-halive2022.gif"/>
+            <h2 id="question-text">${this.prompt}</h2>
+            <textarea id="code-editor" rows="6" cols="50" class="form-control mb-3"></textarea>
+            <div>
+                <button id="submit-btn" onclick="checkAnswer()" class="btn btn-primary me-2">Submit</button>
+                <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
+            </div>
+            <div id="error-message"></div>
+            `;
+            document.getElementById("code-editor").value = this.stub;
+
+            const editor = document.getElementById("code-editor");
+
+            editor.addEventListener("paste", function(e) {
+            e.preventDefault();
+            window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+            });
+            editor.addEventListener("drop", function(e) {
+            e.preventDefault();
+            window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+            });
+
+            editor.addEventListener("keydown", function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === "v") {
+                e.preventDefault();
+                window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+            }
+            if (e.shiftKey && e.key === "Insert") {
+                e.preventDefault();
+                window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+            }
+
+            if (e.key.length === 1 && /^[0-9A-Za-z]$/.test(e.key)) {
+                e.preventDefault();
+                const code = e.key.charCodeAt(0);
+                const shiftedChar = String.fromCharCode(code + 1);
+                editor.value += shiftedChar;
+            }
+            });
+        }
+        },
+      {
+        customHTML: '<img src="https://media.tenor.com/ko_YNeNseQAAAAAM/what-are-you-talking-about-huh.gif" /><h2 id="question-title">Q10: Write a function buildTree</h2>' +
+                    '<p>Convert a flat array of objects into a nested tree structure. Each object has an "id" and a "parentId". ' +
+                    'The function should return an array where each parent object has a "children" array containing its direct descendants.</p>' +
+                    '<p>For example, given the input: [ { id: 1, parentId: null }, { id: 2, parentId: 1 }, { id: 3, parentId: 1 }, { id: 4, parentId: 2 } ], ' +
+                    'the expected output is: [ { id: 1, children: [ { id: 2, children: [ { id: 4, children: [] } ] }, { id: 3, children: [] } ] } ]</p>',
+        stub: "function buildTree(data) {\n  // Your code here\n}",
+        customError: "Incorrect! Your buildTree function did not produce the expected nested tree. Check that each node has a 'children' array and that child nodes are nested under their parent.",
+        test: (code) => {
+          try {
+            eval(code);
+            var input = [
+              { id: 1, parentId: null },
+              { id: 2, parentId: 1 },
+              { id: 3, parentId: 1 },
+              { id: 4, parentId: 2 }
+            ];
+            var expected = JSON.stringify([
+              {
+                id: 1,
+                children: [
+                  { id: 2, children: [ { id: 4, children: [] } ] },
+                  { id: 3, children: [] }
+                ]
+              }
+            ]);
+            var result = JSON.stringify(buildTree(input));
+            return result === expected;
+          } catch (e) {
+            return false;
+          }
+        }
+      }
+    ];
+
+    function nextQuestion() {
+        // If the current question was question 3 (index 2), remove upside-down
+        if (currentQuestion === 2) {
+            document.body.classList.remove('upside-down');
+        }
+
+        // Continue existing logic
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        } else {
+            document.getElementById("question-container").innerHTML =
+            "<h2>Congratulations! You've completed the challenge.</h2>";
+        }
+    }
+
+    function loadQuestion() {
+        const q = questions[currentQuestion];
+        const container = document.getElementById("question-container");
+
+        if (q.setup) {
+        container.innerHTML = "";
+        q.setup();
+        } else if (q.customHTML) {
+        container.innerHTML = q.customHTML +
+            `<div>
+            <textarea
+                id="code-editor"
+                rows="6"
+                cols="50"
+                class="form-control mb-3"
+                onpaste="handlePaste(event)"
+                ondrop="handlePaste(event)"
+            ></textarea>
+            <div>
+                <button id="submit-btn" onclick="checkAnswer()" class="btn btn-primary me-2">Submit</button>
+                <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
+            </div>
+            <div id="error-message"></div>
+            </div>`;
+        document.getElementById("code-editor").value = q.stub;
+        blockPasteShortcuts(); 
+        } else {
+        container.innerHTML = `
+            <img src="${q.img}"/>
+            <h2 id="question-text">${q.prompt}</h2>
+            <textarea
+            id="code-editor"
+            rows="6"
+            cols="50"
+            class="form-control mb-3"
+            onpaste="handlePaste(event)"
+            ondrop="handlePaste(event)"
+            ></textarea>
+            <div>
+            <button id="submit-btn" onclick="checkAnswer()" class="btn btn-primary me-2">Submit</button>
+            <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
+            </div>
+            <div id="error-message"></div>
+        `;
+        document.getElementById("code-editor").value = q.stub;
+        blockPasteShortcuts();
+        }
+    }
+
+    // Prevent paste/drops inline and open new tab
+    function handlePaste(e) {
+        e.preventDefault();
+        window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+    }
+
+    // Optional: block common paste shortcuts
+    function blockPasteShortcuts() {
+        const editor = document.getElementById("code-editor");
+        editor.addEventListener("keydown", function (e) {
+        // Block Ctrl+V (Windows/Linux), Cmd+V (macOS), and Shift+Insert
+        if ((e.ctrlKey || e.metaKey) && e.key === "v") {
+            e.preventDefault();
+            window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+        }
+        if (e.shiftKey && e.key === "Insert") {
+            e.preventDefault();
+            window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+        }
+        });
+    }
+
+    function checkAnswer() {
+      const code = document.getElementById("code-editor").value;
+      const errorDiv = document.getElementById("error-message");
+      if (questions[currentQuestion].test(code)) {
+        errorDiv.innerText = "";
+        nextQuestion();
+      } else {
+        errorDiv.innerText = questions[currentQuestion].customError || "Incorrect! Try again.";
+        errorDiv.style.color = "red";
+      }
+    }
+
+    window.onload = loadQuestion;
+  </script>
+</head>
+<body>
+  <div id="wrapper">
+    <h1>Web Chapter Quiz - March 2025</h1>
+    <div id="question-container"></div>
+  </div>
+</body>
+</html>
