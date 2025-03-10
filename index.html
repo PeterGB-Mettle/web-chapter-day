@@ -282,21 +282,21 @@
 
             editor.addEventListener("paste", function(e) {
             e.preventDefault();
-            window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+            window.open("https://petergb-mettle.github.io/web-chapter-day/videos/rick.mp4", "_blank");
             });
             editor.addEventListener("drop", function(e) {
             e.preventDefault();
-            window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+            window.open("https://petergb-mettle.github.io/web-chapter-day/videos/rick.mp4", "_blank");
             });
 
             editor.addEventListener("keydown", function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === "v") {
                 e.preventDefault();
-                window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+                window.open("https://petergb-mettle.github.io/web-chapter-day/videos/rick.mp4", "_blank");
             }
             if (e.shiftKey && e.key === "Insert") {
                 e.preventDefault();
-                window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+                window.open("https://petergb-mettle.github.io/web-chapter-day/videos/rick.mp4", "_blank");
             }
 
             if (e.key.length === 1 && /^[0-9A-Za-z]$/.test(e.key)) {
@@ -411,7 +411,7 @@
     // Prevent paste/drops inline and open new tab
     function handlePaste(e) {
         e.preventDefault();
-        window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+        window.open("https://petergb-mettle.github.io/web-chapter-day/videos/rick.mp4", "_blank");
     }
 
     // Optional: block common paste shortcuts
@@ -421,11 +421,11 @@
         // Block Ctrl+V (Windows/Linux), Cmd+V (macOS), and Shift+Insert
         if ((e.ctrlKey || e.metaKey) && e.key === "v") {
             e.preventDefault();
-            window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+            window.open("https://petergb-mettle.github.io/web-chapter-day/videos/rick.mp4", "_blank");
         }
         if (e.shiftKey && e.key === "Insert") {
             e.preventDefault();
-            window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
+            window.open("https://petergb-mettle.github.io/web-chapter-day/videos/rick.mp4", "_blank");
         }
         });
     }
