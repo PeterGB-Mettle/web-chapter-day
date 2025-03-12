@@ -104,7 +104,6 @@
             <textarea id="code-editor" rows="6" cols="50" class="form-control mb-3"></textarea>
             <div>
                 <button id="submit-btn" onclick="checkAnswer()" class="btn btn-primary me-2">Submit</button>
-                <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
             </div>
             <div id="error-message"></div>
             `;
@@ -128,7 +127,6 @@
             <h2 id="question-text">Q4: Click the button 1,000 times to proceed.</h2>
             <button id="click-me" class="btn btn-primary">Click Me</button>
             <p id="click-count">Clicks: 0</p>
-            <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
           `;
           let count = 0;
           document.getElementById("click-me").addEventListener("click", function() {
@@ -146,7 +144,6 @@
           <img src="https://media.tenor.com/nDEsMw2HzFwAAAAM/huh-what.gif"/>   
           <h2 id="question-text">Q5: Find and click the hidden button to proceed.</h2>
             <button id="hidden-btn" style="display: none;" class="btn btn-primary">Hidden Button</button>
-            <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
           `;
           document.getElementById("hidden-btn").addEventListener("click", nextQuestion);
         }
@@ -159,7 +156,6 @@
             <img src="https://media.tenor.com/ZKlYeAOpLacAAAAM/tweety-chase.gif" />
             <h2 id="question-text">Q6: Click the moving target button to proceed.</h2>
             <button id="moving-btn" class="btn btn-primary" style="position: absolute;">Catch me</button>
-            <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
           `;
           const container = document.getElementById("question-container");
           const btn = document.getElementById("moving-btn");
@@ -182,7 +178,6 @@
             <img src="https://media.tenor.com/W-42HlChzwAAAAAM/rainn-wilson.gif"/>
             <h2 id="question-text">Q7: Enter the secret key sequence to proceed.</h2>
             <p>Enter the sequence using your keyboard.</p>
-            <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
           `;
           const secret = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
           let index = 0;
@@ -211,7 +206,6 @@
             <p id="timer">Timer: 30</p>
             <button id="timer-btn" class="btn btn-primary" disabled>Click me</button>
             <div id="timer-error"></div>
-            <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
           `;
           const timerEl = document.getElementById("timer");
           const timerBtn = document.getElementById("timer-btn");
@@ -272,7 +266,6 @@
             <textarea id="code-editor" rows="6" cols="50" class="form-control mb-3"></textarea>
             <div>
                 <button id="submit-btn" onclick="checkAnswer()" class="btn btn-primary me-2">Submit</button>
-                <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
             </div>
             <div id="error-message"></div>
             `;
@@ -379,7 +372,6 @@
             ></textarea>
             <div>
                 <button id="submit-btn" onclick="checkAnswer()" class="btn btn-primary me-2">Submit</button>
-                <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
             </div>
             <div id="error-message"></div>
             </div>`;
@@ -399,7 +391,6 @@
             ></textarea>
             <div>
             <button id="submit-btn" onclick="checkAnswer()" class="btn btn-primary me-2">Submit</button>
-            <button id="skip-btn" onclick="nextQuestion()" class="btn btn-secondary">Skip Question</button>
             </div>
             <div id="error-message"></div>
         `;
