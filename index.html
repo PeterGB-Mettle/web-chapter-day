@@ -301,39 +301,57 @@
             });
         }
         },
-      {
-        customHTML: '<img src="https://media.tenor.com/ko_YNeNseQAAAAAM/what-are-you-talking-about-huh.gif" /><h2 id="question-title">Q10: Write a function buildTree</h2>' +
-                    '<p>Convert a flat array of objects into a nested tree structure. Each object has an "id" and a "parentId". ' +
-                    'The function should return an array where each parent object has a "children" array containing its direct descendants.</p>' +
-                    '<p>For example, given the input: [ { id: 1, parentId: null }, { id: 2, parentId: 1 }, { id: 3, parentId: 1 }, { id: 4, parentId: 2 } ], ' +
-                    'the expected output is: [ { id: 1, children: [ { id: 2, children: [ { id: 4, children: [] } ] }, { id: 3, children: [] } ] } ]</p>',
-        stub: "function buildTree(data) {\n  // Your code here\n}",
-        customError: "Incorrect! Your buildTree function did not produce the expected nested tree. Check that each node has a 'children' array and that child nodes are nested under their parent.",
-        test: (code) => {
-          try {
-            eval(code);
-            var input = [
-              { id: 1, parentId: null },
-              { id: 2, parentId: 1 },
-              { id: 3, parentId: 1 },
-              { id: 4, parentId: 2 }
-            ];
-            var expected = JSON.stringify([
-              {
-                id: 1,
-                children: [
-                  { id: 2, children: [ { id: 4, children: [] } ] },
-                  { id: 3, children: [] }
-                ]
-              }
-            ]);
-            var result = JSON.stringify(buildTree(input));
-            return result === expected;
-          } catch (e) {
-            return false;
+    {
+      customHTML: '<img src="https://media.tenor.com/ko_YNeNseQAAAAAM/what-are-you-talking-about-huh.gif" /><h2 id="question-title">Q10: Write a function buildTree</h2>' +
+                  '<p>Convert a flat array of objects into a nested tree structure. Each object has an "id" and a "parentId". ' +
+                  'The function should return an array where each parent object has a "children" array containing its direct descendants.</p>' +
+                  '<p>For example, given the input: [ { id: 1, parentId: null }, { id: 2, parentId: 1 }, { id: 3, parentId: 1 }, { id: 4, parentId: 2 } ], ' +
+                  'the expected output is: [ { id: 1, children: [ { id: 2, children: [ { id: 4, children: [] } ] }, { id: 3, children: [] } ] } ]</p>',
+      stub: "function buildTree(data) {\n  // Your code here\n}",
+      customError: "Incorrect! Your buildTree function did not produce the expected nested tree. Check that each node has a 'children' array and that child nodes are nested under their parent.",
+      test: (code) => {
+        try {
+          eval(code);
+          const tests = [
+            {
+              input: [
+                { id: 1, parentId: null },
+                { id: 2, parentId: 1 },
+                { id: 3, parentId: 1 },
+                { id: 4, parentId: 2 }
+              ],
+              expected: [
+                {
+                  id: 1,
+                  children: [
+                    { id: 2, children: [ { id: 4, children: [] } ] },
+                    { id: 3, children: [] }
+                  ]
+                }
+              ]
+            },
+            // Additional test cases can be added here if needed.
+          ];
+          
+          for (let i = 0; i < tests.length; i++) {
+            const testCase = tests[i];
+            const result = buildTree(testCase.input);
+            if (JSON.stringify(result) !== JSON.stringify(testCase.expected)) {
+              console.log("Test case", i, "failed.");
+              console.log("Input:", testCase.input);
+              console.log("Expected:", testCase.expected);
+              console.log("Received:", result);
+              return false;
+            }
           }
+          return true;
+        } catch (e) {
+          console.log("Error during test execution:", e);
+          return false;
         }
       }
+    }
+
     ];
 
     function nextQuestion() {
